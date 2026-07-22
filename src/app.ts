@@ -20,7 +20,11 @@ app.post('/api/payments/webhook', express.raw({ type: 'application/json' }), str
 app.use(express.json());
 
 app.get('/', (_req, res) => {
-  res.json({ success: true, message: 'RentNest API is running' });
+  res.json({ success: true, message: 'RentNest API is running 🏠' });
+});
+
+app.get('/api/health', (_req, res) => {
+  res.json({ success: true, message: 'OK', timestamp: new Date().toISOString() });
 });
 
 app.use('/api/auth', authRoutes);

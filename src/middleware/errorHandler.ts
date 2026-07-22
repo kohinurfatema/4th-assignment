@@ -16,11 +16,14 @@ const errorHandler = (
     return;
   }
 
-  console.error(err);
+  if (process.env.NODE_ENV !== 'production') {
+    console.error(err);
+  }
+
   res.status(500).json({
     success: false,
     message: 'Internal server error',
-    errorDetails: null,
+    errorDetails: process.env.NODE_ENV === 'production' ? null : err.message,
   });
 };
 
