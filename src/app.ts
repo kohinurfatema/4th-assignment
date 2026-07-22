@@ -32,6 +32,10 @@ app.use('/api/payments', paymentRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/admin', adminRoutes);
 
+app.use((_req, res) => {
+  res.status(404).json({ success: false, message: 'Route not found', errorDetails: null });
+});
+
 app.use(errorHandler);
 
 export default app;

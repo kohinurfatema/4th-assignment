@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { Role } from '@prisma/client';
-import { registerUser, loginUser, getMe } from './auth.service';
+import { registerUser, loginUser, getMe, updateProfile } from './auth.service';
 import { sendSuccess } from '../../utils/response';
 import { AppError } from '../../utils/AppError';
 import { AuthRequest } from '../../middleware/auth.middleware';
@@ -38,6 +38,24 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
 
     const data = await loginUser(email, password);
     sendSuccess(res, 200, 'Login successful', data);
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const updateMyProfile = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const userId = (req as AuthRequest).user?.id;
+    if (!userId) throw new AppError('Unauthorized', 401);
+
+    const { name, phone, address } = req.body as {
+      name?: string;
+      phone?: string;
+      address?: string;
+    };
+
+    const user = await updateProfile(userId, { name, phone, address });
+    sendSuccess(res, 200, 'Profile updated successfully', user);
   } catch (err) {
     next(err);
   }

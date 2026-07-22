@@ -63,3 +63,26 @@ export const getMe = async (userId: string) => {
   if (!user) throw new AppError('User not found', 404);
   return user;
 };
+
+export const updateProfile = async (
+  userId: string,
+  data: { name?: string; phone?: string; address?: string }
+) => {
+  if (!data.name && !data.phone && !data.address) {
+    throw new AppError('At least one field (name, phone, address) is required', 400);
+  }
+
+  return prisma.user.update({
+    where: { id: userId },
+    data,
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      role: true,
+      phone: true,
+      address: true,
+      updatedAt: true,
+    },
+  });
+};
