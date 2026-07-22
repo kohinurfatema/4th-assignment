@@ -7,6 +7,7 @@ import propertyRoutes from './modules/properties/properties.routes';
 import rentalRoutes from './modules/rentals/rentals.routes';
 import landlordRoutes from './modules/rentals/landlord.routes';
 import paymentRoutes, { stripeWebhook } from './modules/payments/payments.routes';
+import reviewRoutes from './modules/reviews/reviews.routes';
 
 const app = express();
 
@@ -27,6 +28,7 @@ app.use('/api/properties', propertyRoutes);
 app.use('/api/rentals', rentalRoutes);
 app.use('/api/landlord', landlordRoutes);
 app.use('/api/payments', paymentRoutes);
+app.use('/api/reviews', reviewRoutes);
 
 app.use(errorHandler);
 
