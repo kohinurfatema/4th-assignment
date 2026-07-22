@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import errorHandler from './middleware/errorHandler';
 import authRoutes from './modules/auth/auth.routes';
+import categoryRoutes from './modules/categories/categories.routes';
 
 const app = express();
 
@@ -13,6 +14,7 @@ app.get('/', (_req, res) => {
 });
 
 app.use('/api/auth', authRoutes);
+app.use('/api/categories', categoryRoutes);
 
 app.use(errorHandler);
 
