@@ -63,6 +63,19 @@ export const getLandlordRentals = async (landlordId: string) => {
   });
 };
 
+export const completeRental = async (id: string, landlordId: string) => {
+  const rental = await prisma.rentalRequest.findUnique({ where: { id }, include: { property: true } });
+  if (!rental) throw new AppError('Rental request not found', 404);
+  if (rental.property.landlordId !== landlordId) throw new AppError('Forbidden', 403);
+  if (rental.status !== RentalStatus.ACTIVE) throw new AppError('Only active rentals can be marked as completed', 400);
+
+  return prisma.rentalRequest.update({
+    where: { id },
+    data: { status: RentalStatus.COMPLETED },
+    include: rentalInclude,
+  });
+};
+
 export const updateRentalStatus = async (
   id: string,
   landlordId: string,

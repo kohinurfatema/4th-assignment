@@ -5,6 +5,7 @@ import {
   getRentalById,
   getLandlordRentals,
   updateRentalStatus,
+  completeRental,
 } from './rentals.service';
 import { sendSuccess } from '../../utils/response';
 import { AppError } from '../../utils/AppError';
@@ -61,6 +62,18 @@ export const landlordRentals = async (req: Request, res: Response, next: NextFun
 
     const rentals = await getLandlordRentals(landlordId);
     sendSuccess(res, 200, 'Rental requests fetched successfully', rentals);
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const markCompleted = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const landlordId = (req as AuthRequest).user?.id;
+    if (!landlordId) throw new AppError('Unauthorized', 401);
+
+    const rental = await completeRental(req.params['id'] as string, landlordId);
+    sendSuccess(res, 200, 'Rental marked as completed', rental);
   } catch (err) {
     next(err);
   }
