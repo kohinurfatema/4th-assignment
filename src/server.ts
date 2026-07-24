@@ -8,7 +8,7 @@ dns.setDefaultResultOrder('ipv4first');
 setGlobalDispatcher(new Agent({
   connect: {
     lookup: (hostname: string, options: dns.LookupOptions, callback: (err: NodeJS.ErrnoException | null, address: string, family: number) => void) => {
-      dns.lookup(hostname, { ...options, family: 4 }, callback);
+      dns.lookup(hostname, { ...options, family: 4 }, callback as any);
     },
   },
 }));

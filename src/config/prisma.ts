@@ -11,7 +11,7 @@ class IPv4WebSocket extends (WebSocket as any) {
     super(address, {
       ...options,
       lookup: (hostname: string, opt: dns.LookupOptions, cb: (err: NodeJS.ErrnoException | null, address: string, family: number) => void) => {
-        dns.lookup(hostname, { ...opt, family: 4 }, cb);
+        dns.lookup(hostname, { ...opt, family: 4 }, cb as any);
       },
     });
   }
