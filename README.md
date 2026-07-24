@@ -9,7 +9,7 @@ A backend REST API for a rental property marketplace. Landlords list properties 
 ## Live API
 
 ```
-https://rentnest-backend.onrender.com
+https://fourth-assignment.onrender.com
 ```
 
 ## API Documentation (Postman)
