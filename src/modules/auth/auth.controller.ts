@@ -4,6 +4,7 @@ import { registerUser, loginUser, getMe, updateProfile } from './auth.service';
 import { sendSuccess } from '../../utils/response';
 import { AppError } from '../../utils/AppError';
 import { AuthRequest } from '../../middleware/auth.middleware';
+import { isValidEmail } from '../../utils/validate';
 
 export const register = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -16,6 +17,12 @@ export const register = async (req: Request, res: Response, next: NextFunction) 
 
     if (!name || !email || !password || !role) {
       throw new AppError('name, email, password, and role are required', 400);
+    }
+    if (!isValidEmail(email)) {
+      throw new AppError('Invalid email format', 400);
+    }
+    if (password.length < 6) {
+      throw new AppError('Password must be at least 6 characters', 400);
     }
     if (!['TENANT', 'LANDLORD'].includes(role)) {
       throw new AppError('Role must be TENANT or LANDLORD', 400);
@@ -34,6 +41,9 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
 
     if (!email || !password) {
       throw new AppError('email and password are required', 400);
+    }
+    if (!isValidEmail(email)) {
+      throw new AppError('Invalid email format', 400);
     }
 
     const data = await loginUser(email, password);

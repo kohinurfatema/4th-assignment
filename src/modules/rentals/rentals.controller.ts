@@ -10,6 +10,7 @@ import {
 import { sendSuccess } from '../../utils/response';
 import { AppError } from '../../utils/AppError';
 import { AuthRequest } from '../../middleware/auth.middleware';
+import { isValidDate, isFutureDate } from '../../utils/validate';
 
 export const submitRequest = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -23,6 +24,8 @@ export const submitRequest = async (req: Request, res: Response, next: NextFunct
     };
 
     if (!propertyId || !moveInDate) throw new AppError('propertyId and moveInDate are required', 400);
+    if (!isValidDate(moveInDate)) throw new AppError('moveInDate must be a valid date (YYYY-MM-DD)', 400);
+    if (!isFutureDate(moveInDate)) throw new AppError('moveInDate must be a future date', 400);
 
     const rental = await submitRentalRequest(tenantId, propertyId, moveInDate, message);
     sendSuccess(res, 201, 'Rental request submitted successfully', rental);

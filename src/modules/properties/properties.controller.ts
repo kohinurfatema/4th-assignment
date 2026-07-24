@@ -58,6 +58,18 @@ export const addProperty = async (req: Request, res: Response, next: NextFunctio
     if (!title || !description || !location || !pricePerMonth || !bedrooms || !bathrooms || !categoryId) {
       throw new AppError('title, description, location, pricePerMonth, bedrooms, bathrooms, and categoryId are required', 400);
     }
+    if (title.trim().length < 3) {
+      throw new AppError('title must be at least 3 characters', 400);
+    }
+    if (Number(pricePerMonth) <= 0) {
+      throw new AppError('pricePerMonth must be greater than 0', 400);
+    }
+    if (Number(bedrooms) < 1) {
+      throw new AppError('bedrooms must be at least 1', 400);
+    }
+    if (Number(bathrooms) < 1) {
+      throw new AppError('bathrooms must be at least 1', 400);
+    }
 
     const property = await createProperty(landlordId, {
       title,
@@ -94,6 +106,16 @@ export const editProperty = async (req: Request, res: Response, next: NextFuncti
       categoryId: string;
       status: PropertyStatus;
     }>;
+
+    if (body.pricePerMonth !== undefined && Number(body.pricePerMonth) <= 0) {
+      throw new AppError('pricePerMonth must be greater than 0', 400);
+    }
+    if (body.bedrooms !== undefined && Number(body.bedrooms) < 1) {
+      throw new AppError('bedrooms must be at least 1', 400);
+    }
+    if (body.bathrooms !== undefined && Number(body.bathrooms) < 1) {
+      throw new AppError('bathrooms must be at least 1', 400);
+    }
 
     const property = await updateProperty(id, landlordId, body);
     sendSuccess(res, 200, 'Property updated successfully', property);
