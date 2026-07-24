@@ -15,7 +15,7 @@ https://fourth-assignment.onrender.com
 ## API Documentation (Postman)
 
 ```
-https://documenter.getpostman.com/view/YOUR_COLLECTION_ID
+https://documenter.getpostman.com/view/56882385/2sBY4QtKjW
 ```
 
 ## Admin Credentials
