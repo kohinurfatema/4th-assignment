@@ -8,8 +8,9 @@ export interface AuthRequest extends Request {
 }
 
 export const authenticate = (req: Request, _res: Response, next: NextFunction) => {
-  const token = req.headers.authorization;
-  if (!token) return next(new AppError('No token provided', 401));
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) return next(new AppError('No token provided', 401));
+  const token = authHeader.split(' ')[1];
 
   const secret = process.env.JWT_SECRET;
   if (!secret) return next(new AppError('Server configuration error', 500));
