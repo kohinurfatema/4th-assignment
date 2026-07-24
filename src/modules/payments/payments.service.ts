@@ -1,11 +1,24 @@
 import Stripe from 'stripe';
+import dns from 'dns';
+import { Agent, fetch as undiciFetch } from 'undici';
 import prisma from '../../config/prisma';
 import { AppError } from '../../utils/AppError';
+
+const ipv4Agent = new Agent({
+  connect: {
+    lookup: (hostname: string, options: dns.LookupOptions, callback: (err: NodeJS.ErrnoException | null, address: string, family: number) => void) => {
+      dns.lookup(hostname, { ...options, family: 4 }, callback);
+    },
+  },
+});
+
+const ipv4Fetch = (url: string, init?: RequestInit) =>
+  undiciFetch(url, { ...init, dispatcher: ipv4Agent } as Parameters<typeof undiciFetch>[1]);
 
 const getStripe = () => {
   const key = process.env.STRIPE_SECRET_KEY;
   if (!key) throw new AppError('Stripe key not configured', 500);
-  return new Stripe(key);
+  return new Stripe(key, { httpClient: Stripe.createFetchHttpClient(ipv4Fetch as typeof fetch) });
 };
 
 export const createPaymentSession = async (tenantId: string, rentalRequestId: string) => {

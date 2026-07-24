@@ -1,9 +1,17 @@
 import 'dotenv/config';
 import dns from 'dns';
+import { Agent, setGlobalDispatcher } from 'undici';
 import app from './app';
 
-// Force IPv4 — IPv6 times out on this network (affects both pg TCP and fetch)
+// Force IPv4 for all outbound connections — IPv6 times out on this network
 dns.setDefaultResultOrder('ipv4first');
+setGlobalDispatcher(new Agent({
+  connect: {
+    lookup: (hostname: string, options: dns.LookupOptions, callback: (err: NodeJS.ErrnoException | null, address: string, family: number) => void) => {
+      dns.lookup(hostname, { ...options, family: 4 }, callback);
+    },
+  },
+}));
 
 const PORT = process.env.PORT ?? 5000;
 
