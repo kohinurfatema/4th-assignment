@@ -1,11 +1,25 @@
 import 'dotenv/config';
-import { Pool } from 'pg';
-import { PrismaPg } from '@prisma/adapter-pg';
+import dns from 'dns';
+import WebSocket from 'ws';
+import { neonConfig } from '@neondatabase/serverless';
+import { PrismaNeon } from '@prisma/adapter-neon';
 import { PrismaClient } from '@prisma/client';
 
-const connectionString = (process.env.DATABASE_URL ?? '').replace('&channel_binding=require', '');
-const pool = new Pool({ connectionString, ssl: { rejectUnauthorized: false } });
-const adapter = new PrismaPg(pool);
+// Force IPv4 for WebSocket connections to NeonDB (port 5432 TCP is blocked, WSS on 443 works)
+class IPv4WebSocket extends (WebSocket as any) {
+  constructor(address: string, options?: any) {
+    super(address, {
+      ...options,
+      lookup: (hostname: string, opt: dns.LookupOptions, cb: (err: NodeJS.ErrnoException | null, address: string, family: number) => void) => {
+        dns.lookup(hostname, { ...opt, family: 4 }, cb);
+      },
+    });
+  }
+}
+
+neonConfig.webSocketConstructor = IPv4WebSocket;
+
+const adapter = new PrismaNeon({ connectionString: process.env.DATABASE_URL });
 const prisma = new PrismaClient({ adapter });
 
 export default prisma;
