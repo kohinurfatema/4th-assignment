@@ -17,7 +17,7 @@ class IPv4WebSocket extends (WebSocket as any) {
   }
 }
 
-neonConfig.webSocketConstructor = IPv4WebSocket;
+neonConfig.webSocketConstructor = IPv4WebSocket as any;
 
 const adapter = new PrismaNeon({ connectionString: process.env.DATABASE_URL });
 const prisma = new PrismaClient({ adapter });
