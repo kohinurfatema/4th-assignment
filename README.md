@@ -12,10 +12,10 @@ A backend REST API for a rental property marketplace. Landlords list properties 
 https://fourth-assignment.onrender.com
 ```
 
-## API Documentation (Postman)
+## API Documentation
 
 ```
-https://documenter.getpostman.com/view/56882385/2sBY4QtKjW
+https://github.com/kohinurfatema/4th-assignment#api-endpoints
 ```
 
 ## Admin Credentials
