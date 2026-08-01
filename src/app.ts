@@ -12,7 +12,11 @@ import adminRoutes from './modules/admin/admin.routes';
 
 const app = express();
 
-app.use(cors());
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+}));
 
 // Stripe webhook must receive raw body before express.json parses it
 app.post('/api/payments/webhook', express.raw({ type: 'application/json' }), stripeWebhook);
