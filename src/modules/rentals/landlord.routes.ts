@@ -11,8 +11,8 @@ router.use(authenticate, authorize(Role.LANDLORD));
 
 // Rental request management
 router.get('/requests', landlordRentals);
-router.patch('/requests/:id', handleRentalStatus);
-router.patch('/requests/:id/complete', markCompleted);
+router.post('/requests/:id/status', handleRentalStatus);
+router.post('/requests/:id/complete', markCompleted);
 
 // Property management under /api/landlord/properties
 router.get('/properties', myProperties);
