@@ -8,7 +8,7 @@ export const createReview = async (
   comment: string
 ) => {
   const completedRental = await prisma.rentalRequest.findFirst({
-    where: { tenantId, propertyId, status: 'COMPLETED' },
+    where: { tenantId, propertyId, status: { in: ['ACTIVE', 'COMPLETED'] } },
   });
   if (!completedRental) {
     throw new AppError('You can only review a property after completing a rental', 403);
