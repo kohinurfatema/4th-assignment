@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { createPaymentSession, handleStripeWebhook, getUserPayments, getPaymentById } from './payments.service';
+import { createPaymentSession, handleStripeWebhook, getUserPayments, getPaymentById, verifyPaymentSession } from './payments.service';
 import { sendSuccess } from '../../utils/response';
 import { AppError } from '../../utils/AppError';
 import { AuthRequest } from '../../middleware/auth.middleware';
@@ -40,6 +40,17 @@ export const myPayments = async (req: Request, res: Response, next: NextFunction
 
     const payments = await getUserPayments(userId);
     sendSuccess(res, 200, 'Payments fetched successfully', payments);
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const verifyPayment = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { session_id } = req.query as { session_id?: string };
+    if (!session_id) throw new AppError('session_id is required', 400);
+    const data = await verifyPaymentSession(session_id);
+    sendSuccess(res, 200, 'Payment verified', data);
   } catch (err) {
     next(err);
   }

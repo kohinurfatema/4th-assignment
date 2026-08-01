@@ -49,7 +49,7 @@ export const createPaymentSession = async (tenantId: string, rentalRequestId: st
     ],
     mode: 'payment',
     metadata: { rentalRequestId },
-    success_url: `${process.env.CLIENT_URL ?? 'http://localhost:3000'}/payment/success`,
+    success_url: `${process.env.CLIENT_URL ?? 'http://localhost:3000'}/payment/success?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${process.env.CLIENT_URL ?? 'http://localhost:3000'}/payment/cancel`,
   });
 
@@ -111,6 +111,28 @@ export const handleStripeWebhook = async (rawBody: Buffer, signature: string) =>
       data: { status: 'FAILED' },
     });
   }
+};
+
+export const verifyPaymentSession = async (sessionId: string) => {
+  const stripe = getStripe();
+  const session = await stripe.checkout.sessions.retrieve(sessionId);
+
+  if (session.status !== 'complete') throw new AppError('Payment not completed', 400);
+
+  const rentalRequestId = session.metadata?.['rentalRequestId'];
+  if (!rentalRequestId) throw new AppError('Invalid session', 400);
+
+  await prisma.payment.update({
+    where: { rentalRequestId },
+    data: { status: 'COMPLETED', transactionId: session.payment_intent as string, paidAt: new Date() },
+  });
+
+  await prisma.rentalRequest.update({
+    where: { id: rentalRequestId },
+    data: { status: 'ACTIVE' },
+  });
+
+  return { success: true };
 };
 
 export const getUserPayments = async (userId: string) => {
